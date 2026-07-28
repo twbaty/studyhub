@@ -102,8 +102,43 @@ function renderQuestion(container, questions, index) {
     });
   });
 
-  nextButton.addEventListener("click", () => {
-    const nextIndex = (index + 1) % questions.length;
-    renderQuestion(container, questions, nextIndex);
+nextButton.addEventListener("click", () => {
+  const nextIndex = index + 1;
+
+  if (nextIndex >= questions.length) {
+    renderCompletionScreen(container, questions.length);
+    return;
+  }
+
+  renderQuestion(container, questions, nextIndex);
+
+  function renderCompletionScreen(container, questionCount) {
+  container.innerHTML = `
+    <section class="question-card completion-screen">
+      <h2>Review Complete</h2>
+
+      <p>You reviewed ${questionCount} questions.</p>
+
+      <button
+        type="button"
+        id="restart-review"
+        class="next-question"
+      >
+        Start Again
+      </button>
+    </section>
+  `;
+
+  const restartButton = container.querySelector("#restart-review");
+
+  restartButton.addEventListener("click", () => {
+    window.location.reload();
   });
+}
+  
+  container.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+});
 }
