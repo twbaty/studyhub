@@ -52,11 +52,36 @@
 }
 
 .next-question {
-  margin-top: 1rem;
-  padding: 0.65rem 1rem;
+  appearance: none;
+  background: #3f51b5;
+  border: 1px solid #3f51b5;
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.8rem 1.2rem;
+  text-decoration: none;
+}
+
+.next-question:hover {
+  background: #303f9f;
+  border-color: #303f9f;
+}
+
+.next-question:focus-visible {
+  outline: 3px solid rgba(63, 81, 181, 0.25);
+  outline-offset: 2px;
 }
 
 .studyhub-error {
   border-left: 4px solid #c62828;
   padding: 0.75rem 1rem;
+}
+
+.question-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
 }
