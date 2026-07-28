@@ -20,7 +20,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const session = createSession();
 
-    renderQuestion(container, questions, 0, session);
+const testQuestions = questions.slice(0, 3);
+
+ renderQuestion(container, testQuestions, 0, session);
   } catch (error) {
     container.innerHTML = `
       <div class="studyhub-error">
