@@ -4,24 +4,38 @@
     "category": "Evidence Handling",
     "question": "Which type of evidence should generally be collected first during live response?",
     "choices": [
-      {
-        "id": "A",
-        "text": "Archived log files"
-      },
-      {
-        "id": "B",
-        "text": "Volatile memory"
-      },
-      {
-        "id": "C",
-        "text": "Printed documentation"
-      },
-      {
-        "id": "D",
-        "text": "Powered-off storage media"
-      }
+      { "id": "A", "text": "Archived log files" },
+      { "id": "B", "text": "Volatile memory" },
+      { "id": "C", "text": "Printed documentation" },
+      { "id": "D", "text": "Powered-off storage media" }
     ],
     "answer": "B",
     "explanation": "Volatile memory may be lost when power is removed, so it is generally collected before persistent evidence."
+  },
+  {
+    "id": "CHFI-EVIDENCE-002",
+    "category": "Evidence Handling",
+    "question": "What is the primary purpose of a write blocker?",
+    "choices": [
+      { "id": "A", "text": "Encrypt acquired evidence" },
+      { "id": "B", "text": "Prevent changes to source media" },
+      { "id": "C", "text": "Compress forensic images" },
+      { "id": "D", "text": "Recover deleted files" }
+    ],
+    "answer": "B",
+    "explanation": "A write blocker prevents the examination system from writing to or altering the source evidence."
+  },
+  {
+    "id": "CHFI-EVIDENCE-003",
+    "category": "Evidence Handling",
+    "question": "What document records possession and transfer of evidence?",
+    "choices": [
+      { "id": "A", "text": "Chain of custody" },
+      { "id": "B", "text": "Incident timeline" },
+      { "id": "C", "text": "Search warrant" },
+      { "id": "D", "text": "Hash manifest" }
+    ],
+    "answer": "A",
+    "explanation": "The chain-of-custody record documents who possessed the evidence, when transfers occurred, and how it was handled."
   }
 ]
