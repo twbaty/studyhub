@@ -208,6 +208,15 @@ These items are intentionally outside the current roadmap.
 - Flashcard mode
 - Instructor mode
 - Team study packs
+
+## Contextual Notes Integration
+
+- [ ] Associate questions with one or more Study Guide topics
+- [ ] Display relevant notes in an overlay after an incorrect answer
+- [ ] Provide a “Review this topic” link after a correct answer
+- [ ] Support question-to-note anchors
+- [ ] Return the learner to the same question after closing the notes
+- [ ] Track whether linked notes were opened
 - Study analytics
 - Cloud synchronization
 - Plugin architecture
