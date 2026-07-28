@@ -1,0 +1,16 @@
+site_name: StudyHub
+site_description: Free, interactive study guides built for learning first.
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - CHFI:
+      - Study Guide: tracks/chfi/index.md
+
+extra_javascript:
+  - javascript/study.js
+
+extra_css:
+  - stylesheets/study.css
