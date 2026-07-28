@@ -18,7 +18,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       throw new Error("Question bank is empty or invalid.");
     }
 
-    renderQuestion(container, questions, 0);
+    const session = createSession();
+
+    renderQuestion(container, questions, 0, session);
   } catch (error) {
     container.innerHTML = `
       <div class="studyhub-error">
@@ -31,13 +33,53 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-function renderQuestion(container, questions, index) {
+function createSession() {
+  return {
+    correct: 0,
+    incorrect: 0,
+    missedQuestionIds: [],
+    domainResults: {}
+  };
+}
+
+function recordAnswer(session, question, isCorrect) {
+  if (isCorrect) {
+    session.correct += 1;
+  } else {
+    session.incorrect += 1;
+    session.missedQuestionIds.push(question.id);
+  }
+
+  const domainId = question.domain_id ?? "uncategorized";
+  const domainName = question.domain ?? "Uncategorized";
+
+  if (!session.domainResults[domainId]) {
+    session.domainResults[domainId] = {
+      name: domainName,
+      asked: 0,
+      correct: 0,
+      incorrect: 0
+    };
+  }
+
+  const domainResult = session.domainResults[domainId];
+
+  domainResult.asked += 1;
+
+  if (isCorrect) {
+    domainResult.correct += 1;
+  } else {
+    domainResult.incorrect += 1;
+  }
+}
+
+function renderQuestion(container, questions, index, session) {
   const question = questions[index];
 
   container.innerHTML = `
     <section class="question-card">
       <div class="question-meta">
-        ${question.category ?? ""}
+        Question ${index + 1} of ${questions.length}
       </div>
 
       <h2>${question.question}</h2>
@@ -58,7 +100,11 @@ function renderQuestion(container, questions, index) {
           .join("")}
       </div>
 
-      <div id="question-feedback" class="question-feedback" hidden></div>
+      <div
+        id="question-feedback"
+        class="question-feedback"
+        hidden
+      ></div>
 
       <button
         type="button"
@@ -71,14 +117,24 @@ function renderQuestion(container, questions, index) {
     </section>
   `;
 
-  const feedback = document.getElementById("question-feedback");
-  const nextButton = document.getElementById("next-question");
+  const feedback = container.querySelector("#question-feedback");
+  const nextButton = container.querySelector("#next-question");
   const answerButtons = container.querySelectorAll(".answer-choice");
+
+  let answerRecorded = false;
 
   answerButtons.forEach((button) => {
     button.addEventListener("click", () => {
+      if (answerRecorded) {
+        return;
+      }
+
+      answerRecorded = true;
+
       const selectedAnswer = button.dataset.choiceId;
       const isCorrect = selectedAnswer === question.answer;
+
+      recordAnswer(session, question, isCorrect);
 
       answerButtons.forEach((answerButton) => {
         answerButton.disabled = true;
@@ -98,26 +154,59 @@ function renderQuestion(container, questions, index) {
         <p>${question.explanation}</p>
       `;
 
-      nextButton.hidden = questions.length <= 1;
+      nextButton.hidden = false;
+
+      if (index === questions.length - 1) {
+        nextButton.textContent = "View Results";
+      }
     });
   });
 
-nextButton.addEventListener("click", () => {
-  const nextIndex = index + 1;
+  nextButton.addEventListener("click", () => {
+    const nextIndex = index + 1;
 
-  if (nextIndex >= questions.length) {
-    renderCompletionScreen(container, questions.length);
-    return;
-  }
+    if (nextIndex >= questions.length) {
+      renderCompletionScreen(container, questions, session);
+      return;
+    }
 
-  renderQuestion(container, questions, nextIndex);
+    renderQuestion(container, questions, nextIndex, session);
 
-  function renderCompletionScreen(container, questionCount) {
+    container.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  });
+}
+
+function renderCompletionScreen(container, questions, session) {
+  const totalReviewed = session.correct + session.incorrect;
+  const missedCount = session.missedQuestionIds.length;
+
   container.innerHTML = `
     <section class="question-card completion-screen">
       <h2>Review Complete</h2>
 
-      <p>You reviewed ${questionCount} questions.</p>
+      <p>You reviewed ${totalReviewed} questions.</p>
+
+      <div class="session-results">
+        <p><strong>Correct:</strong> ${session.correct}</p>
+        <p><strong>Incorrect:</strong> ${session.incorrect}</p>
+      </div>
+
+      ${
+        missedCount > 0
+          ? `
+            <button
+              type="button"
+              id="review-missed"
+              class="next-question"
+            >
+              Review Missed Questions
+            </button>
+          `
+          : ""
+      }
 
       <button
         type="button"
@@ -129,16 +218,36 @@ nextButton.addEventListener("click", () => {
     </section>
   `;
 
+  const reviewMissedButton = container.querySelector("#review-missed");
   const restartButton = container.querySelector("#restart-review");
 
+  if (reviewMissedButton) {
+    reviewMissedButton.addEventListener("click", () => {
+      const missedQuestions = session.missedQuestionIds
+        .map((questionId) =>
+          questions.find((question) => question.id === questionId)
+        )
+        .filter(Boolean);
+
+      const newSession = createSession();
+
+      renderQuestion(container, missedQuestions, 0, newSession);
+
+      container.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    });
+  }
+
   restartButton.addEventListener("click", () => {
-    window.location.reload();
+    const newSession = createSession();
+
+    renderQuestion(container, questions, 0, newSession);
+
+    container.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
   });
-}
-  
-  container.scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
-});
 }
