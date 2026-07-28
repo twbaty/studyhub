@@ -83,5 +83,28 @@
 .question-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 1.25rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #d7dbe2;
+}
+
+.next-question {
+  appearance: none;
+  background: #3f51b5;
+  border: 1px solid #3f51b5;
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.8rem 1.2rem;
+}
+
+.next-question[hidden] {
+  display: none;
+}
+
+.next-question:hover {
+  background: #303f9f;
+  border-color: #303f9f;
 }
