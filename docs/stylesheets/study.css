@@ -108,3 +108,11 @@
   background: #303f9f;
   border-color: #303f9f;
 }
+
+.completion-screen {
+  text-align: center;
+}
+
+.completion-screen .next-question {
+  margin-top: 1rem;
+}
