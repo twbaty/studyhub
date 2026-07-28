@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const session = createSession();
 
     // Temporary three-question test set.
+    let originalQuizQuestions = [];
     const testQuestions = questions.slice(0, 3);
 
     renderQuestion(
