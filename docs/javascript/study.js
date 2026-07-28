@@ -20,9 +20,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const session = createSession();
 
-const testQuestions = questions.slice(0, 3);
+    // Temporary three-question test set.
+    const testQuestions = questions.slice(0, 3);
 
- renderQuestion(container, testQuestions, 0, session);
+    renderQuestion(
+      container,
+      testQuestions,
+      0,
+      session,
+      testQuestions,
+      false
+    );
   } catch (error) {
     container.innerHTML = `
       <div class="studyhub-error">
@@ -75,13 +83,20 @@ function recordAnswer(session, question, isCorrect) {
   }
 }
 
-function renderQuestion(container, questions, index, session) {
-  const question = questions[index];
+function renderQuestion(
+  container,
+  currentQuestions,
+  index,
+  session,
+  mainQuestions,
+  isReviewMode
+) {
+  const question = currentQuestions[index];
 
   container.innerHTML = `
     <section class="question-card">
       <div class="question-meta">
-        Question ${index + 1} of ${questions.length}
+        Question ${index + 1} of ${currentQuestions.length}
       </div>
 
       <h2>${question.question}</h2>
@@ -158,7 +173,7 @@ function renderQuestion(container, questions, index, session) {
 
       nextButton.hidden = false;
 
-      if (index === questions.length - 1) {
+      if (index === currentQuestions.length - 1) {
         nextButton.textContent = "View Results";
       }
     });
@@ -167,12 +182,25 @@ function renderQuestion(container, questions, index, session) {
   nextButton.addEventListener("click", () => {
     const nextIndex = index + 1;
 
-    if (nextIndex >= questions.length) {
-      renderCompletionScreen(container, questions, session);
+    if (nextIndex >= currentQuestions.length) {
+      renderCompletionScreen(
+        container,
+        currentQuestions,
+        session,
+        mainQuestions,
+        isReviewMode
+      );
       return;
     }
 
-    renderQuestion(container, questions, nextIndex, session);
+    renderQuestion(
+      container,
+      currentQuestions,
+      nextIndex,
+      session,
+      mainQuestions,
+      isReviewMode
+    );
 
     container.scrollIntoView({
       behavior: "smooth",
@@ -181,15 +209,26 @@ function renderQuestion(container, questions, index, session) {
   });
 }
 
-function renderCompletionScreen(container, questions, session) {
+function renderCompletionScreen(
+  container,
+  currentQuestions,
+  session,
+  mainQuestions,
+  isReviewMode
+) {
   const totalReviewed = session.correct + session.incorrect;
   const missedCount = session.missedQuestionIds.length;
 
+  const heading = isReviewMode ? "Review Complete" : "Quiz Complete";
+  const summaryText = isReviewMode
+    ? `You reviewed ${totalReviewed} questions.`
+    : `You answered ${totalReviewed} questions.`;
+
   container.innerHTML = `
     <section class="question-card completion-screen">
-      <h2>Review Complete</h2>
+      <h2>${heading}</h2>
 
-      <p>You reviewed ${totalReviewed} questions.</p>
+      <p>${summaryText}</p>
 
       <div class="session-results">
         <p><strong>Correct:</strong> ${session.correct}</p>
@@ -227,13 +266,20 @@ function renderCompletionScreen(container, questions, session) {
     reviewMissedButton.addEventListener("click", () => {
       const missedQuestions = session.missedQuestionIds
         .map((questionId) =>
-          questions.find((question) => question.id === questionId)
+          currentQuestions.find((question) => question.id === questionId)
         )
         .filter(Boolean);
 
       const newSession = createSession();
 
-      renderQuestion(container, missedQuestions, 0, newSession);
+      renderQuestion(
+        container,
+        missedQuestions,
+        0,
+        newSession,
+        mainQuestions,
+        true
+      );
 
       container.scrollIntoView({
         behavior: "smooth",
@@ -245,7 +291,14 @@ function renderCompletionScreen(container, questions, session) {
   restartButton.addEventListener("click", () => {
     const newSession = createSession();
 
-    renderQuestion(container, questions, 0, newSession);
+    renderQuestion(
+      container,
+      mainQuestions,
+      0,
+      newSession,
+      mainQuestions,
+      false
+    );
 
     container.scrollIntoView({
       behavior: "smooth",
