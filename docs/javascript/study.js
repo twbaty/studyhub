@@ -1,3 +1,5 @@
+let originalQuizQuestions = [];
+
 document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("studyhub-reviewer");
 
@@ -18,20 +20,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       throw new Error("Question bank is empty or invalid.");
     }
 
-    const session = createSession();
-
     // Temporary three-question test set.
-    let originalQuizQuestions = [];
-    const testQuestions = questions.slice(0, 3);
+    // Replace this with:
+    // originalQuizQuestions = questions;
+    // when you are ready to use the full question bank.
+    originalQuizQuestions = questions.slice(0, 3);
 
-    renderQuestion(
-      container,
-      testQuestions,
-      0,
-      session,
-      testQuestions,
-      false
-    );
+    startQuiz(container);
   } catch (error) {
     container.innerHTML = `
       <div class="studyhub-error">
@@ -51,6 +46,18 @@ function createSession() {
     missedQuestionIds: [],
     domainResults: {}
   };
+}
+
+function startQuiz(container) {
+  const session = createSession();
+
+  renderQuestion(
+    container,
+    originalQuizQuestions,
+    0,
+    session,
+    false
+  );
 }
 
 function recordAnswer(session, question, isCorrect) {
@@ -89,7 +96,6 @@ function renderQuestion(
   currentQuestions,
   index,
   session,
-  mainQuestions,
   isReviewMode
 ) {
   const question = currentQuestions[index];
@@ -188,7 +194,6 @@ function renderQuestion(
         container,
         currentQuestions,
         session,
-        mainQuestions,
         isReviewMode
       );
       return;
@@ -199,14 +204,10 @@ function renderQuestion(
       currentQuestions,
       nextIndex,
       session,
-      mainQuestions,
       isReviewMode
     );
 
-    container.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+    scrollToQuiz(container);
   });
 }
 
@@ -214,16 +215,18 @@ function renderCompletionScreen(
   container,
   currentQuestions,
   session,
-  mainQuestions,
   isReviewMode
 ) {
-  const totalReviewed = session.correct + session.incorrect;
+  const totalAnswered = session.correct + session.incorrect;
   const missedCount = session.missedQuestionIds.length;
 
-  const heading = isReviewMode ? "Review Complete" : "Quiz Complete";
+  const heading = isReviewMode
+    ? "Review Complete"
+    : "Quiz Complete";
+
   const summaryText = isReviewMode
-    ? `You reviewed ${totalReviewed} questions.`
-    : `You answered ${totalReviewed} questions.`;
+    ? `You reviewed ${totalAnswered} questions.`
+    : `You answered ${totalAnswered} questions.`;
 
   container.innerHTML = `
     <section class="question-card completion-screen">
@@ -252,7 +255,7 @@ function renderCompletionScreen(
 
       <button
         type="button"
-        id="restart-review"
+        id="restart-quiz"
         class="next-question"
       >
         Start Again
@@ -260,50 +263,50 @@ function renderCompletionScreen(
     </section>
   `;
 
-  const reviewMissedButton = container.querySelector("#review-missed");
-  const restartButton = container.querySelector("#restart-review");
+  const reviewMissedButton =
+    container.querySelector("#review-missed");
+
+  const restartButton =
+    container.querySelector("#restart-quiz");
 
   if (reviewMissedButton) {
     reviewMissedButton.addEventListener("click", () => {
       const missedQuestions = session.missedQuestionIds
         .map((questionId) =>
-          currentQuestions.find((question) => question.id === questionId)
+          currentQuestions.find(
+            (question) => question.id === questionId
+          )
         )
         .filter(Boolean);
 
-      const newSession = createSession();
+      if (missedQuestions.length === 0) {
+        startQuiz(container);
+        return;
+      }
+
+      const reviewSession = createSession();
 
       renderQuestion(
         container,
         missedQuestions,
         0,
-        newSession,
-        mainQuestions,
+        reviewSession,
         true
       );
 
-      container.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
+      scrollToQuiz(container);
     });
   }
 
   restartButton.addEventListener("click", () => {
-    const newSession = createSession();
+    startQuiz(container);
+    scrollToQuiz(container);
+  });
+}
 
-    renderQuestion(
-      container,
-      mainQuestions,
-      0,
-      newSession,
-      mainQuestions,
-      false
-    );
-
-    container.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+function scrollToQuiz(container) {
+  container.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
   });
 }
