@@ -1,0 +1,27 @@
+[
+  {
+    "id": "CHFI-EVIDENCE-001",
+    "category": "Evidence Handling",
+    "question": "Which type of evidence should generally be collected first during live response?",
+    "choices": [
+      {
+        "id": "A",
+        "text": "Archived log files"
+      },
+      {
+        "id": "B",
+        "text": "Volatile memory"
+      },
+      {
+        "id": "C",
+        "text": "Printed documentation"
+      },
+      {
+        "id": "D",
+        "text": "Powered-off storage media"
+      }
+    ],
+    "answer": "B",
+    "explanation": "Volatile memory may be lost when power is removed, so it is generally collected before persistent evidence."
+  }
+]
