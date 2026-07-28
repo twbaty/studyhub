@@ -24,7 +24,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Replace this with:
     // originalQuizQuestions = questions;
     // when you are ready to use the full question bank.
-    originalQuizQuestions = questions.slice(0, 3);
+    //originalQuizQuestions = questions.slice(0, 3);
+    originalQuizQuestions = questions;
 
     startQuiz(container);
   } catch (error) {
