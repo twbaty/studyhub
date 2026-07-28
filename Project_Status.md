@@ -22,3 +22,12 @@ The application is currently limited to three questions using:
 
 ```javascript
 originalQuizQuestions = questions.slice(0, 3);
+
+Next Recommended Work
+Restore the full 200-question bank
+Add a visible progress bar
+Decide whether to shuffle questions
+Decide whether to shuffle answer choices
+Add resume support with localStorage
+Add optional domain-level results
+Add persistent missed-question review
